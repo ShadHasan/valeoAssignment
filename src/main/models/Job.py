@@ -7,6 +7,6 @@ class Job:
     job_function: Callable
     args: tuple
 
-    def __int__(self, func, args):
+    def __init__(self, func, args):
         self.job_function = func
         self.args = args

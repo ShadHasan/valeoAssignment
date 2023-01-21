@@ -16,6 +16,7 @@ if __name__ == "__main__":
 
         print("Jobs: {}".format(jobs))
         job = input("Pick the job, or shut to stop")
-        if jobs.get(job)
+        if jobs.get(job):
             schedular.load_job(jobs.get(job))
-        #schedular.load_job()
+        if job != "shut":
+            job = "no"

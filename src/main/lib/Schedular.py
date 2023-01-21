@@ -21,7 +21,7 @@ class Schedular(threading.Thread):
     def get_job(self, job_id):
         return self.pools[job_id]
 
-    def load_job(self, job:Job):
+    def load_job(self, job: Job):
         job.job_id = self.__job_id
         self.job_loader[self.__job_id] = job
         self.__job_id = self.__job_id + 1
@@ -36,16 +36,24 @@ class Schedular(threading.Thread):
 
     def schedular(self):
         print("Running schedular")
+        clean_load = []
+        deletable_job = []
+        runnable_job = {}
         for job_id in self.job_loader.keys():
-            thread = threading.Thread(target=self.job_loader[job_id].job_function, args=self.job_loader[job_id].args)
+            runnable_job[self.job_loader[job_id].job_function] = self.job_loader[job_id].args
+            clean_load.append(job_id)
+        for job in clean_load:
+            del self.job_loader[job]
+        for k, v in runnable_job.items():
+            thread = threading.Thread(target=k, args=(v,))
             thread.start()
-            thread.join()
-            del self.job_loader[job_id]
         for job_id in self.pools.keys():
             if not self.pools[job_id].is_alive():
-                del self.pools[job_id]
+                deletable_job.append(job_id)
             else:
                 print("Current alive job {}".format(job_id))
+        for job in deletable_job:
+            del self.pools[job]
         interval = self.interval * 60
         print("Next scheduling after {} s".format(interval))
         sleep(interval)
